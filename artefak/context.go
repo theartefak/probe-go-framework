@@ -17,6 +17,7 @@ type Ctx struct {
 	StatusCode int
 	handlers   []HandlerFunc
 	index      int
+	artefak    *Artefak
 }
 
 func NewCtx(w http.ResponseWriter, req *http.Request) *Ctx {
@@ -84,8 +85,11 @@ func (c *Ctx) Data(code int, data []byte) {
 	c.Writer.Write(data)
 }
 
-func (c *Ctx) HTML(code int, html string) {
+func (c *Ctx) HTML(code int, name string, data interface{}) {
 	c.SetHeader("Content-Type", "text/html")
 	c.Status(code)
-	c.Writer.Write([]byte(html))
+
+	if err := c.artefak.htmlTemplates.ExecuteTemplate(c.Writer, name+".html", data); err != nil {
+		c.Fail(500, err.Error())
+	}
 }
