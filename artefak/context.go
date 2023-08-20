@@ -15,15 +15,31 @@ type Ctx struct {
 	Method     string
 	Params     map[string]string
 	StatusCode int
+	handlers   []HandlerFunc
+	index      int
 }
 
 func NewCtx(w http.ResponseWriter, req *http.Request) *Ctx {
 	return &Ctx{
-		Writer : w,
-		Req    : req,
 		Path   : req.URL.Path,
 		Method : req.Method,
+		Req    : req,
+		Writer : w,
+		index  : -1,
 	}
+}
+
+func (c *Ctx) Next() {
+	c.index++
+	s := len(c.handlers)
+	for ; c.index < s; c.index++ {
+		c.handlers[c.index](c)
+	}
+}
+
+func (c *Ctx) Fail(code int, err string) {
+	c.index = len(c.handlers)
+	c.JSON(code, H{"message": err})
 }
 
 func (c *Ctx) Param(key string) string {

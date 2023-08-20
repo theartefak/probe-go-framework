@@ -95,4 +95,6 @@ func (r *router) handle(c *Ctx) {
 	} else {
 		c.String(http.StatusNotFound, "404 Not Found: %s\n", c.Path)
 	}
+
+	c.Next()
 }

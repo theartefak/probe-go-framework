@@ -2,6 +2,7 @@ package artefak
 
 import (
 	"net/http"
+	"strings"
 )
 
 type HandlerFunc func(*Ctx)
@@ -30,7 +31,7 @@ func New() *Artefak {
 }
 
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
-	artefak := group.artefak
+	artefak  := group.artefak
 	newGroup := &RouterGroup{
 		prefix  : group.prefix + prefix,
 		parent  : group,
@@ -39,6 +40,10 @@ func (group *RouterGroup) Group(prefix string) *RouterGroup {
 
 	artefak.groups = append(artefak.groups, newGroup)
 	return newGroup
+}
+
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
 }
 
 func (group *RouterGroup) Route(method string, comp string, handler HandlerFunc) {
@@ -59,6 +64,14 @@ func (artefak *Artefak) Run(addr string) (err error) {
 }
 
 func (artefak *Artefak) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandlerFunc
+	for _, group := range artefak.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
+
 	c := NewCtx(w, req)
+	c.handlers = middlewares
 	artefak.router.handle(c)
 }
