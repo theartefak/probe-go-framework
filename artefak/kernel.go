@@ -26,10 +26,17 @@ type (
 	}
 )
 
-func New() *Artefak {
+func Setup() *Artefak {
 	artefak := &Artefak{router: NewRouter()}
 	artefak.RouterGroup = &RouterGroup{artefak: artefak}
 	artefak.groups = []*RouterGroup{artefak.RouterGroup}
+
+	return artefak
+}
+
+func New() *Artefak {
+	artefak := Setup()
+	artefak.Use(Logger(), Recover())
 
 	return artefak
 }
