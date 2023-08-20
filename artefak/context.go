@@ -13,6 +13,7 @@ type Ctx struct {
 	Req        *http.Request
 	Path       string
 	Method     string
+	Params     map[string]string
 	StatusCode int
 }
 
@@ -23,6 +24,11 @@ func NewCtx(w http.ResponseWriter, req *http.Request) *Ctx {
 		Path   : req.URL.Path,
 		Method : req.Method,
 	}
+}
+
+func (c *Ctx) Param(key string) string {
+	value, _ := c.Params[key]
+	return value
 }
 
 func (c *Ctx) PostForm(key string) string {
