@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/theartefak/trit/artefak"
 )
 
 func main() {
-    app := artefak.New()
+	app := artefak.New()
 
-    app.GET("/", func(w http.ResponseWriter, r *http.Request) {
-    	fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
-    })
+	app.GET("/", func(c *artefak.Ctx) {
+		c.String(http.StatusOK, "Halo")
+	})
 
-    app.Run(":8000")
+	app.Run(":8000")
 }
