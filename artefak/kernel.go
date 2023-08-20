@@ -6,24 +6,52 @@ import (
 
 type HandlerFunc func(*Ctx)
 
-type Artefak struct {
-	router *router
-}
+type (
+	RouterGroup struct {
+		prefix      string
+		middlewares []HandlerFunc
+		parent      *RouterGroup
+		artefak     *Artefak
+	}
+
+	Artefak struct {
+		*RouterGroup
+		router *router
+		groups []*RouterGroup
+	}
+)
 
 func New() *Artefak {
-	return &Artefak{router: NewRouter()}
+	artefak := &Artefak{router: NewRouter()}
+	artefak.RouterGroup = &RouterGroup{artefak: artefak}
+	artefak.groups = []*RouterGroup{artefak.RouterGroup}
+
+	return artefak
 }
 
-func (artefak *Artefak) Route(method string, pattern string, handler HandlerFunc) {
-	artefak.router.Route(method, pattern, handler)
+func (group *RouterGroup) Group(prefix string) *RouterGroup {
+	artefak := group.artefak
+	newGroup := &RouterGroup{
+		prefix  : group.prefix + prefix,
+		parent  : group,
+		artefak : artefak,
+	}
+
+	artefak.groups = append(artefak.groups, newGroup)
+	return newGroup
 }
 
-func (artefak *Artefak) GET(pattern string, handler HandlerFunc) {
-	artefak.Route("GET", pattern, handler)
+func (group *RouterGroup) Route(method string, comp string, handler HandlerFunc) {
+	pattern := group.prefix + comp
+	group.artefak.router.Route(method, pattern, handler)
 }
 
-func (artefak *Artefak) POST(pattern string, handler HandlerFunc) {
-	artefak.Route("POST", pattern, handler)
+func (group *RouterGroup) GET(pattern string, handler HandlerFunc) {
+	group.Route("GET", pattern, handler)
+}
+
+func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
+	group.Route("POST", pattern, handler)
 }
 
 func (artefak *Artefak) Run(addr string) (err error) {
