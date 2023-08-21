@@ -24,7 +24,7 @@ func trace(message string) string {
 	return str.String()
 }
 
-func Recover() HandlerFunc {
+func Recovery() HandlerFunc {
 	return func(c *Ctx) {
 		defer func() {
 			if err := recover(); err != nil {

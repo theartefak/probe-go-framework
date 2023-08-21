@@ -36,7 +36,7 @@ func Setup() *Artefak {
 
 func New() *Artefak {
 	artefak := Setup()
-	artefak.Use(Logger(), Recover())
+	artefak.Use(Logger(), Recovery())
 
 	return artefak
 }
@@ -72,7 +72,7 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 
 func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
 	absolutePath := path.Join(group.prefix, relativePath)
-	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
+	fileServer   := http.StripPrefix(absolutePath, http.FileServer(fs))
 
 	return func(c *Ctx) {
 		file := c.Param("filepath")
