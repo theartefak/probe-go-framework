@@ -1,17 +1,17 @@
 package main
 
 import (
-	"net/http"
+    "net/http"
 
-	"github.com/theartefak/artefak"
+    "github.com/theartefak/artefak"
 )
 
 func main() {
-	app := artefak.New()
+    app := artefak.New()
 
-	app.GET("/", func(c *artefak.Ctx) {
-		c.String(http.StatusOK, "Halo")
-	})
+    app.GET("/", func(c *artefak.Ctx) {
+        c.String(http.StatusOK, "Halo")
+    })
 
-	app.Run(":8000")
+    app.Run(":8000")
 }
