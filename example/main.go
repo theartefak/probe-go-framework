@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/theartefak/trit/artefak"
+	"github.com/theartefak/artefak"
 )
 
 func main() {
