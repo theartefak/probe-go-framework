@@ -1,11 +1,14 @@
 package artefak
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"path"
 	"strings"
 )
+
+const ARTEFAK_VERSION = "1.0.0"
 
 type HandlerFunc func(*Ctx)
 
@@ -30,6 +33,12 @@ func Setup() *Artefak {
 	artefak := &Artefak{router: NewRouter()}
 	artefak.RouterGroup = &RouterGroup{artefak: artefak}
 	artefak.groups = []*RouterGroup{artefak.RouterGroup}
+
+	mainLogo := " ┌----------------┐\n"
+	mainLogo += " │ Artefak v" +ARTEFAK_VERSION+" │\n"
+	mainLogo += " └----------------┘"
+
+	fmt.Println(mainLogo)
 
 	return artefak
 }
