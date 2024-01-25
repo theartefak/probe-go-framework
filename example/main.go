@@ -3,7 +3,7 @@ package main
 import (
     "net/http"
 
-    "github.com/theartefak/artefak"
+    artefak "go-framework"
 )
 
 func main() {
